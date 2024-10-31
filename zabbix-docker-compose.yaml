@@ -1,0 +1,80 @@
+version '3.8'
+
+
+services:
+  mysql:
+    image: mysql:lastest
+    container_name: zabbix-mysql
+    environment:
+      MYSQL_DATABASE: zabbix
+      MYSQL_USER: zabbix
+      MYSQL_PASSWORD: your_password
+      MYSQL_ROOT_PASSWORD: your_root_password
+  volumes:
+    - mysql_data:/var/lib/mysql
+  networks:
+    - zabbix-net
+
+
+  zabbix-server:
+    image: zabbix-server-mysql:latest
+    container_name: zabbix-server
+    environment:
+      DB_SERVER_HOST: mysql
+      MYSQL_DATABASE: zabbix
+      MYSQL_USER: zabbix
+      MYSQL_PASSWORD: your_password
+    depends_on:
+      - mysql
+    ports:
+      - "10051:10051"
+    volumes:
+      - zabbix_server_data:/var/lib/zabbix
+    networks:
+      - zabbix-net
+
+
+  zabbix-java-gateway:
+    image: zabbix/zabbix-java-gateway:latest
+    container_name: zabbix-java-gateway
+    ports: 
+      - "10052:10052"
+    networks:
+      - zabbix-net
+
+
+  zabbix-web:
+    image: zabbix/zabbix-web-apache-mysql:latest
+    container_name: zabbix-web
+    environment:
+      DB_SERVER_HOST: mysql
+      MYSQL_DATABASE: zabbix
+      MYSQL_USER: zabbix
+      MYSQL_PASSWORD: your_password
+      ZAB_SERVER_HOST: zabbix-server
+    depends_on:
+      - mysql
+      -zabbix-server
+    ports:
+      - "8080:8080"
+    network:
+      - zabbix-net
+
+
+  zabbix-snmptraps:
+    image: zabbix/zabbix-snmptraps:latest
+    container_name: zabbix-snmptraps
+    volumes:
+      - snmptraps:/var/lib/zabbix/snmptraps
+    networks:
+      - zabbix-net
+
+
+volumes:
+  mysql_data:
+  zabbix_server_data:
+  snmptraps:
+
+networks:
+  zabbix-net:
+    driver: bridge
