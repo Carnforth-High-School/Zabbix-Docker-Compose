@@ -1,0 +1,50 @@
+version: '3.9'
+services:
+  db:
+    image: zabbix/zabbix-server-mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: supersecretpassword
+      MYSQL_DATABASE: zabbix
+      MYSQL_USER: zabbix
+      MYSQL_PASSWORD: supersecretpassword
+    volumes:
+      - /etc/docker/volumes/db
+    ports:
+      - '3306:3306'
+
+  redis:
+    image: zabbix/zabbix-java-gateway:latest
+    restart: always
+    volumes:
+      - /your/host/path/to/redis/data:/data
+    ports:
+      - '6379:6379'
+
+  remix:
+    image: zabbix/zabbix-web-apache-mysql:latest
+    restart: always
+    ports:
+      - '3000:3000'
+    environment:
+      - DB_SERVER_HOST=db
+      - MYSQL_DATABASE=zabbix
+      - MYSQL_USER=zabbix
+      - MYSQL_PASSWORD=supersecretpassword
+      - MYSQL_ROOT_PASSWORD=supersecretsecretpassword
+      - REDIS_URL=redis://redis:6379
+    volumes:
+      - /etc/docker/volumes/icons
+      - /etc/docker/volumes/adverts
+      - /etc/docker/volumes/assets:/app/public/assets
+    depends_on:
+      - db
+      - redis
+
+  snmptraps:
+    image: zabbix/zabbix-snmptraps:latest
+    restart: always
+    volumes:
+      - /etc/docker/volumes/snmptraps:/var/lib/zabbix/snmptraps
+    ports:
+      - '162:162/udp'
