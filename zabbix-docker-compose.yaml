@@ -53,7 +53,7 @@ services:
       ZAB_SERVER_HOST: zabbix-server
     depends_on:
       - mysql
-      -zabbix-server
+      - zabbix-server
     ports:
       - "8080:8080"
     network:
