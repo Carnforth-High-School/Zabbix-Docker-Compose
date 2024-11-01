@@ -6,7 +6,6 @@ services:
     container_name: zabbix-mysql
     environment:
       MYSQL_DATABASE: zabbix
-      MYSQL_USER: zabbix
       MYSQL_PASSWORD: your_password
       MYSQL_ROOT_PASSWORD: your_root_password
     volumes:
