@@ -79,10 +79,14 @@ volumes:
   mysql_data:
   zabbix_server_data:
   snmptraps:
-
+# IP address range for containers is 10.107.8.61-70/23
 networks:
   zabbix-net:
     driver: bridge
     ipam:
       config:
         - subnet: 10.107.8.0/24
+        - gateway: 10.107.8.1
+      dns:
+        - 10.107.8.21
+        - 10.107.8.22
