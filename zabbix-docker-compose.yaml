@@ -9,11 +9,10 @@ services:
       MYSQL_USER: zabbix
       MYSQL_PASSWORD: your_password
       MYSQL_ROOT_PASSWORD: your_root_password
-  volumes:
-    - mysql_data:/var/lib/mysql
-  networks:
+    volumes:
+    - /mysql_data:/var/lib/mysql
+    networks:
     - zabbix-net
-  ipv4_address: 10.107.8.61
   zabbix-server:
     image: zabbix-server-mysql:latest
     restart: always
@@ -28,10 +27,9 @@ services:
     ports:
       - "10051:10051"
     volumes:
-      - zabbix_server_data:/var/lib/zabbix
+      - /zabbix_server_data:/var/lib/zabbix
     networks:
       - zabbix-net
-    ipv4_address: 10.107.8.62
   zabbix-java-gateway:
     image: zabbix/zabbix-java-gateway:latest
     restart: always
@@ -40,7 +38,6 @@ services:
       - "10052:10052"
     networks:
       - zabbix-net
-    ipv4_address: 10.107.8.63
   zabbix-web:
     image: zabbix/zabbix-web-apache-mysql:latest
     restart: always
@@ -58,28 +55,25 @@ services:
       - "8080:8080"
     network:
       - zabbix-net
-    ipv4_address: 10.107.8.64
   zabbix-snmptraps:
     image: zabbix/zabbix-snmptraps:latest
     restart: always
     container_name: zabbix-snmptraps
     volumes:
-      - snmptraps:/var/lib/zabbix/snmptraps
+      - /snmptraps:/var/lib/zabbix/snmptraps
     networks:
       - zabbix-net
-    ipv4_address: 10.107.8.65
-volumes:
-  mysql_data:
-  zabbix_server_data:
-  snmptraps:
 # IP address range for containers is 10.107.8.61-70/23
 networks:
   zabbix-net:
     driver: bridge
     ipam:
-      config:
-        - subnet: 10.107.8.0/24
-        - gateway: 10.107.8.1
-    dns:
-      - 10.107.8.21
-      - 10.107.8.22
+     config:
+       - subnet: 10.107.8.0/24
+       - gateway: 10.107.8.1
+       - aux_addresses:
+          mysql: 10.107.8.61
+          zabbix-server: 10.107.8.62
+          zabbix-java-gateway: 10.107.8.63
+          zabbix-web: 10.107.8.64
+          zabbix-snmptraps: 10.107.8.65
