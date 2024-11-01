@@ -13,7 +13,7 @@ services:
     - mysql_data:/var/lib/mysql
   networks:
     - zabbix-net
-        ipv4_address: 10.107.8.61
+  ipv4_address: 10.107.8.61
   zabbix-server:
     image: zabbix-server-mysql:latest
     restart: always
@@ -31,7 +31,7 @@ services:
       - zabbix_server_data:/var/lib/zabbix
     networks:
       - zabbix-net
-          ipv4_address: 10.107.8.62
+    ipv4_address: 10.107.8.62
   zabbix-java-gateway:
     image: zabbix/zabbix-java-gateway:latest
     restart: always
@@ -40,7 +40,7 @@ services:
       - "10052:10052"
     networks:
       - zabbix-net
-          ipv4_address: 10.107.8.63
+    ipv4_address: 10.107.8.63
   zabbix-web:
     image: zabbix/zabbix-web-apache-mysql:latest
     restart: always
@@ -58,7 +58,7 @@ services:
       - "8080:8080"
     network:
       - zabbix-net
-          ipv4_address: 10.107.8.64
+    ipv4_address: 10.107.8.64
   zabbix-snmptraps:
     image: zabbix/zabbix-snmptraps:latest
     restart: always
@@ -67,7 +67,7 @@ services:
       - snmptraps:/var/lib/zabbix/snmptraps
     networks:
       - zabbix-net
-          ipv4_address: 10.107.8.65
+    ipv4_address: 10.107.8.65
 volumes:
   mysql_data:
   zabbix_server_data:
