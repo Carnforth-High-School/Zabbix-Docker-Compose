@@ -14,6 +14,7 @@ services:
     - mysql_data:/var/lib/mysql
   networks:
     - zabbix-net
+        ipv4_address: 10.107.8.61
 
 
   zabbix-server:
@@ -32,6 +33,7 @@ services:
       - zabbix_server_data:/var/lib/zabbix
     networks:
       - zabbix-net
+          ipv4_address: 10.107.8.62
 
 
   zabbix-java-gateway:
@@ -41,6 +43,7 @@ services:
       - "10052:10052"
     networks:
       - zabbix-net
+          ipv4_address: 10.107.8.63
 
 
   zabbix-web:
@@ -59,6 +62,7 @@ services:
       - "8080:8080"
     network:
       - zabbix-net
+          ipv4_address: 10.107.8.64
 
 
   zabbix-snmptraps:
@@ -68,6 +72,7 @@ services:
       - snmptraps:/var/lib/zabbix/snmptraps
     networks:
       - zabbix-net
+          ipv4_address: 10.107.8.65
 
 
 volumes:
@@ -78,3 +83,6 @@ volumes:
 networks:
   zabbix-net:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 10.107.8.0/24
